@@ -15,9 +15,16 @@ import java.util.List;
 public class PersonAdapter extends RecyclerView.Adapter<PersonViewHolder> {
 
     private List<Person> personList;
+    private DeleteCallback deleteCallback;
 
-    public PersonAdapter(List<Person> personList) {
+    public PersonAdapter(List<Person> personList, DeleteCallback deleteCallback) {
         this.personList = personList;
+        this.deleteCallback = deleteCallback;
+    }
+
+    public void updatePersonList(List<Person> personList) {
+        this.personList = personList;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -38,12 +45,10 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonViewHolder> {
         nameTextView.setText(person.getName());
         ageTextView.setText(person.getAge() + "");
 
-        final PersonViewHolder personViewHolder = holder;
-
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(personViewHolder.itemView.getContext(), person.getName(), Toast.LENGTH_LONG).show();
+                deleteCallback.onDelete(person);
             }
         });
 
@@ -59,4 +64,8 @@ class PersonViewHolder extends RecyclerView.ViewHolder {
     public PersonViewHolder(@NonNull View itemView) {
         super(itemView);
     }
+}
+
+interface DeleteCallback {
+    void onDelete(Person person);
 }
